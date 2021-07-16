@@ -6,7 +6,7 @@ export class RouteClientController {
   constructor(private readonly routeClientService: RouteClientService) {}
 
   @Get()
-  getHello(): string {
-    return this.routeClientService.getHello();
+  async getHello(): Promise<string> {
+    return await this.routeClientService.getHello();
   }
 }

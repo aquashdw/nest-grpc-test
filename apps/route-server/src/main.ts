@@ -9,11 +9,13 @@ async function bootstrap() {
     {
       transport: Transport.GRPC,
       options: {
+        url: 'localhost:3001',
         package: 'routeguide',
         protoPath: join(__dirname, 'proto/route_guide.proto'),
       },
     },
   );
+
   await app.listen();
 }
 bootstrap();
