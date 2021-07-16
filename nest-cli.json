@@ -5,6 +5,8 @@
   "root": "apps/nest-grpc-test",
   "compilerOptions": {
     "webpack": true,
+    "assets": ["**/*.proto"],
+    "watchAssets": true,
     "tsConfigPath": "apps/nest-grpc-test/tsconfig.app.json"
   },
   "projects": {
