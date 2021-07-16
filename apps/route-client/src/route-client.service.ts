@@ -1,13 +1,8 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { Point } from './message/point.message';
-import { Feature } from './message/feature.message';
 import { Observable } from 'rxjs';
 import { Client, ClientGrpc, Transport } from '@nestjs/microservices';
 import { join } from 'path';
-
-interface RouteGuide {
-  getFeature(data: Point): Observable<Feature>;
-}
+import { Feature, Point, RouteGuide } from '@app/route-lib';
 
 @Injectable()
 export class RouteClientService implements OnModuleInit {
@@ -30,7 +25,6 @@ export class RouteClientService implements OnModuleInit {
     const result = await this.routeGuide
       .getFeature({ latitude: 10, longitude: 10 })
       .toPromise();
-    console.log(JSON.stringify(result));
     return 'Hello World!';
   }
 }

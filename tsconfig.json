@@ -12,6 +12,13 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "paths": {}
+    "paths": {
+      "@app/route-lib": [
+        "libs/route-lib/src"
+      ],
+      "@app/route-lib/*": [
+        "libs/route-lib/src/*"
+      ]
+    }
   }
 }

@@ -70,7 +70,12 @@
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/apps/"
-    ]
+      "<rootDir>/apps/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "@app/route-lib/(.*)": "<rootDir>/libs/route-lib/src/$1",
+      "@app/route-lib": "<rootDir>/libs/route-lib/src"
+    }
   }
 }

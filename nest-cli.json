@@ -5,7 +5,9 @@
   "root": "apps/nest-grpc-test",
   "compilerOptions": {
     "webpack": true,
-    "assets": ["**/*.proto"],
+    "assets": [
+      "**/*.proto"
+    ],
     "watchAssets": true,
     "tsConfigPath": "apps/nest-grpc-test/tsconfig.app.json"
   },
@@ -35,6 +37,15 @@
       "sourceRoot": "apps/route-client/src",
       "compilerOptions": {
         "tsConfigPath": "apps/route-client/tsconfig.app.json"
+      }
+    },
+    "route-lib": {
+      "type": "library",
+      "root": "libs/route-lib",
+      "entryFile": "index",
+      "sourceRoot": "libs/route-lib/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/route-lib/tsconfig.lib.json"
       }
     }
   }
