@@ -84,7 +84,9 @@ export class RouteClientService implements OnModuleInit {
         message: 'three',
       },
     ]);
-    this.logger.log(`routeChat result: ${JSON.stringify(resultRouteChat)}`);
+    resultRouteChat.forEach((next: RouteNote) => {
+      this.logger.log(`routeChat message: ${JSON.stringify(next)}`);
+    });
 
     return 'Hello World!';
   }
@@ -128,19 +130,13 @@ export class RouteClientService implements OnModuleInit {
   }
 
   // under construction
-  async routeChat(notes: RouteNote[]): Promise<RouteNote[]> {
+  routeChat(notes: RouteNote[]): Observable<RouteNote> {
     const subject = new ReplaySubject<RouteNote>();
     for (const note of notes) {
       subject.next(note);
     }
     subject.complete();
 
-    const resultStream = await this.routeGuide.routeChat(subject);
-    const resultNotes: RouteNote[] = [];
-    resultStream.forEach((next: RouteNote) => {
-      resultNotes.push(next);
-    });
-
-    return resultNotes;
+    return this.routeGuide.routeChat(subject);
   }
 }
