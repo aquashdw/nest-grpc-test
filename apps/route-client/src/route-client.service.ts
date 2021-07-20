@@ -31,20 +31,18 @@ export class RouteClientService implements OnModuleInit {
   async getHello(): Promise<string> {
     // blocking
     const resultGetFeature = this.getFeature(10, 10);
-    await resultGetFeature.forEach((next: Feature) => {
-      this.logger.log(`getFeature next.name: ${next.name}`);
-      this.logger.log(
-        `getFeature next.location: ${JSON.stringify(next.location)}`,
-      );
+    resultGetFeature.subscribe({
+      next: (next: Feature) =>
+        this.logger.log(`getFeature next: ${JSON.stringify(next)}`),
+      complete: () => this.logger.log(`getFeature complete`),
     });
 
     // server-streaming
     const resultListFeatures = this.listFeatures(15, 5, 15, 5);
-    await resultListFeatures.forEach((next: Feature) => {
-      this.logger.log(`listFeature next.name: ${next.name}`);
-      this.logger.log(
-        `listFeature next.location: ${JSON.stringify(next.location)}`,
-      );
+    resultListFeatures.subscribe({
+      next: (next: Feature) =>
+        this.logger.log(`listFeatures next: ${JSON.stringify(next)}`),
+      complete: () => this.logger.log(`listFeatures complete`),
     });
 
     // client-streaming
@@ -62,8 +60,10 @@ export class RouteClientService implements OnModuleInit {
         longitude: 3,
       },
     ]);
-    await resultRecordRoute.forEach((next: RouteSummary) => {
-      this.logger.log(`recordRoute result: ${JSON.stringify(next)}`);
+    resultRecordRoute.subscribe({
+      next: (next: RouteSummary) =>
+        this.logger.log(`recordRoute next: ${JSON.stringify(next)}`),
+      complete: () => this.logger.log(`recordRoute complete`),
     });
 
     // bi-streaming
@@ -90,8 +90,10 @@ export class RouteClientService implements OnModuleInit {
         message: 'three',
       },
     ]);
-    await resultRouteChat.forEach((next: RouteNote) => {
-      this.logger.log(`routeChat message: ${JSON.stringify(next)}`);
+    resultRouteChat.subscribe({
+      next: (next: Feature) =>
+        this.logger.log(`routeChat next: ${JSON.stringify(next)}`),
+      complete: () => this.logger.log(`routeChat complete`),
     });
 
     return 'Hello World!';
@@ -124,13 +126,11 @@ export class RouteClientService implements OnModuleInit {
 
   recordRoute(points: Point[]): Observable<RouteSummary> {
     const subject = new ReplaySubject<Point>();
-    const resultStream = this.routeGuide.recordRoute(subject.asObservable());
     for (const point of points) {
       subject.next(point);
     }
     subject.complete();
-
-    return resultStream;
+    return this.routeGuide.recordRoute(subject.asObservable());
   }
 
   routeChat(notes: RouteNote[]): Observable<RouteNote> {
