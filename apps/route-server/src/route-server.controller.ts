@@ -1,16 +1,17 @@
-import { Controller, Get, Logger } from '@nestjs/common';
-import { RouteServerService } from './route-server.service';
+import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
-import { Feature, Point, Rectangle } from '@app/route-lib';
+import {
+  Feature,
+  Point,
+  Rectangle,
+  RouteNote,
+  RouteSummary,
+} from '@app/route-lib';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { RouteSummary } from '@app/route-lib/message/route-summary';
-import { RouteNote } from '@app/route-lib/message/route-note';
 
 @Controller()
 export class RouteServerController {
   private readonly logger = new Logger(RouteServerController.name);
-
-  constructor(private readonly routeServerService: RouteServerService) {}
 
   @GrpcMethod('RouteGuide', 'GetFeature')
   getFeature(data: Point): Feature {

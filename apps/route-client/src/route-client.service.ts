@@ -1,10 +1,14 @@
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Observable, ReplaySubject } from 'rxjs';
 import { Client, ClientGrpc, Transport } from '@nestjs/microservices';
 import { join } from 'path';
-import { Feature, Point, RouteGuide } from '@app/route-lib';
-import { RouteSummary } from '@app/route-lib/message/route-summary';
-import { RouteNote } from '@app/route-lib/message/route-note';
+import {
+  Feature,
+  Point,
+  RouteGuide,
+  RouteNote,
+  RouteSummary,
+} from '@app/route-lib';
 
 @Injectable()
 export class RouteClientService implements OnModuleInit {
