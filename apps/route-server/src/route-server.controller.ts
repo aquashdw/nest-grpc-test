@@ -44,10 +44,7 @@ export class RouteServerController {
 
     const onNext = (message: Point) => {
       this.logger.log(`recordRoute message: ${JSON.stringify(message)}`);
-      points.push({
-        latitude: message.latitude,
-        longitude: message.longitude,
-      });
+      points.push(message);
     };
     const onComplete = () => {
       subject.next({
