@@ -1,14 +1,90 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { RouteServerService } from './route-server.service';
-import { GrpcMethod } from '@nestjs/microservices';
-import { Feature, Point } from '@app/route-lib';
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Feature, Point, Rectangle } from '@app/route-lib';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { RouteSummary } from '@app/route-lib/message/route-summary';
+import { RouteNote } from '@app/route-lib/message/route-note';
 
 @Controller()
 export class RouteServerController {
+  private readonly logger = new Logger(RouteServerController.name);
+
   constructor(private readonly routeServerService: RouteServerService) {}
 
   @GrpcMethod('RouteGuide', 'GetFeature')
   getFeature(data: Point): Feature {
+    this.logger.log(`getFeature request: ${JSON.stringify(data)}`);
     return { name: 'test', location: { latitude: 10, longitude: 10 } };
+  }
+
+  @GrpcMethod('RouteGuide', 'ListFeatures')
+  listFeatures(data: Rectangle): Observable<Feature> {
+    this.logger.log(`listFeatures request: ${JSON.stringify(data)}`);
+    const subject = new ReplaySubject<Feature>();
+
+    for (let i = 0; i < 10; i++)
+      subject.next({
+        name: `test-${i}`,
+        location: {
+          latitude: i * 10,
+          longitude: i * 10,
+        },
+      });
+    subject.complete();
+
+    return subject;
+  }
+
+  @GrpcStreamMethod('RouteGuide', 'RecordRoute')
+  recordRoute(message: Observable<Point>): Observable<RouteSummary> {
+    const points: Point[] = [];
+    const subject = new Subject<RouteSummary>();
+
+    const onNext = (message: Point) => {
+      this.logger.log(`recordRoute message: ${JSON.stringify(message)}`);
+      points.push({
+        latitude: message.latitude,
+        longitude: message.longitude,
+      });
+    };
+    const onComplete = () => {
+      subject.next({
+        pointCount: points.length,
+        featureCount: points.length / 2,
+        distance: -1,
+        elapsedTime: -1,
+      });
+
+      subject.complete();
+    };
+    message.subscribe({
+      next: onNext,
+      complete: onComplete,
+    });
+
+    return subject.asObservable();
+  }
+
+  @GrpcStreamMethod('RouteGuide', 'RouteChat')
+  routeChat(message: Observable<RouteNote>): Observable<RouteNote> {
+    const subject = new Subject<RouteNote>();
+
+    const onNext = (message: RouteNote) => {
+      this.logger.log(`routeChat message: ${JSON.stringify(message)}`);
+      subject.next({
+        location: {
+          latitude: message.location.longitude,
+          longitude: message.location.latitude,
+        },
+        message: message.message,
+      });
+    };
+    const onComplete = () => subject.complete();
+    message.subscribe({
+      next: onNext,
+      complete: onComplete,
+    });
+    return subject.asObservable();
   }
 }

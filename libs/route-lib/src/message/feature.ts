@@ -1,4 +1,4 @@
-import { Point } from './point';
+import { Point } from '@app/route-lib';
 
 export interface Feature {
   name?: string;
