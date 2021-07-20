@@ -38,7 +38,7 @@ export class RouteServerController {
   }
 
   @GrpcStreamMethod('RouteGuide', 'RecordRoute')
-  recordRoute(message: Observable<Point>): Observable<RouteSummary> {
+  recordRoute(upstream: Observable<Point>): Observable<RouteSummary> {
     const points: Point[] = [];
     const subject = new Subject<RouteSummary>();
 
@@ -56,7 +56,7 @@ export class RouteServerController {
 
       subject.complete();
     };
-    message.subscribe({
+    upstream.subscribe({
       next: onNext,
       complete: onComplete,
     });
@@ -65,7 +65,7 @@ export class RouteServerController {
   }
 
   @GrpcStreamMethod('RouteGuide', 'RouteChat')
-  routeChat(message: Observable<RouteNote>): Observable<RouteNote> {
+  routeChat(upstream: Observable<RouteNote>): Observable<RouteNote> {
     const subject = new Subject<RouteNote>();
 
     const onNext = (message: RouteNote) => {
@@ -79,7 +79,7 @@ export class RouteServerController {
       });
     };
     const onComplete = () => subject.complete();
-    message.subscribe({
+    upstream.subscribe({
       next: onNext,
       complete: onComplete,
     });
